@@ -19,13 +19,17 @@ GR-<MODULE>-<NNN>
 
 ## Provenance
 
-当前候选包含两类来源：
+当前候选主要包含三类来源：
 
 - `Legacy Project`：从历史项目代码中抽取并去客户化、规范化。
 - `PTC Guide`：从 Windchill 13.1.2.0 Customization Guide 的典型模式中整理并最小化。
+- `XWorks Guide`：从 XWorks 指南或经过整理的 XWorks 实践中提炼，仅适用于明确启用 XWorks 的项目。
 
-两类条目目前均保持 `candidate`。`PTC Guide` 来源更适合作为默认实现方向，但仍不代表目标项目已经编译或 Runtime Verification 通过。
+当前条目均保持 `candidate`。
 
+`PTC Guide` 来源通常更适合作为 Windchill 官方扩展机制的默认实现参考；`Legacy Project` 用于补充真实项目工程上下文；`XWorks Guide` 仅在项目明确 `XWorks Enabled: true` 时作为实现候选。
+
+任何来源都不代表目标项目已经编译或 Runtime Verification 通过，精确 PTC API 仍应针对目标 Windchill Version 使用 Javadoc / API Lookup 验证。
 
 ## Persistence / Transaction (`persistence`)
 
@@ -176,7 +180,6 @@ GR-<MODULE>-<NNN>
 | ID | Scenario | Source | XWorks | Status | Path |
 |---|---|---|---:|---|---|
 | GR-RESOURCE-001 | JCA/UI label 使用 Windchill resource bundle，而不是把显示文字硬编码在 Builder/Validator/FormProcessor 中。 | PTC Guide | No | Candidate | `references/resource/GR-RESOURCE-001` |
-
 
 ## WRS (`wrs`)
 
