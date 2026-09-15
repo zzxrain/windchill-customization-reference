@@ -1,0 +1,16 @@
+Recommended source namespace:
+
+<Windchill>/src/com/company/customer/...
+
+Do NOT place site classes under:
+
+<Windchill>/src/wt/...
+<Windchill>/src/com/ptc/...
+
+Example Windchill shell command:
+
+xconfmanager --add \
+  com.ptc.core.meta.descriptor.server.impl.includeClassStartsWith=com.company. \
+  -p
+
+The trailing period in "com.company." is intentional.

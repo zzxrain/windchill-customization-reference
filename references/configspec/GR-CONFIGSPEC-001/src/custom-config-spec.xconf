@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Configuration SYSTEM "xconf.dtd">
+<Configuration targetFile="codebase/service.properties">
+    <Service
+        context="default"
+        name="wt.vc.config.custom.CustomConfigSpecDelegate">
+        <Option
+            cardinality="singleton"
+            requestor="null"
+            serviceClass="com.company.windchill.reference.configspec.ReferenceCustomConfigSpecDelegate"
+            selector="WCTYPE|wt.vc.config.custom.CustomConfigSpec"/>
+    </Service>
+</Configuration>

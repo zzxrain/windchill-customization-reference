@@ -1,0 +1,16 @@
+<Windchill>/
+├── codebase/
+│   └── templates/
+│       └── SomeTemplate.html          # runtime file
+└── wtSafeArea/
+    ├── ptcOrig/
+    │   └── codebase/templates/
+    │       └── SomeTemplate.html      # original PTC copy
+    └── siteMod/
+        └── codebase/templates/
+            └── SomeTemplate.html      # customized site copy
+
+Rules:
+1. Preserve the PTC original before customization.
+2. Keep the site modification in siteMod.
+3. Use Windchill customization/update tooling to manage maintenance updates.

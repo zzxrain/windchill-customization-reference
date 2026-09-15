@@ -1,0 +1,10 @@
+Preferred pattern:
+
+1. Keep PTC LogicalAttributes.xml protected.
+2. Create a site-owned LogicalAttributesSite.xml.
+3. Configure the site file through the supported translator selector property:
+
+com.ptc.core.meta.common.impl.LogicalIdentifierFactory.translatorSelectors
+
+The actual selector value/path is site-specific and must be confirmed for the
+project's Windchill version and deployment layout.

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Configuration SYSTEM "xconf.dtd">
+<Configuration targetFile="codebase/wt.properties">
+    <Property
+        name="wt.services.applicationcontext.WTServiceProviderFromProperties.customPropertyFiles"
+        default="ext/company/sitepart.properties"/>
+</Configuration>

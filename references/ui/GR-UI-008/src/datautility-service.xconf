@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Configuration SYSTEM "xconf.dtd">
+<Configuration targetFile="codebase/service.properties">
+    <Service name="com.ptc.core.components.descriptor.DataUtility">
+        <Option
+            serviceClass="com.company.windchill.reference.ui.ReferenceDataUtility"
+            requestor="java.lang.Object"
+            selector="company.reference.display"
+            cardinality="duplicate"/>
+    </Service>
+</Configuration>

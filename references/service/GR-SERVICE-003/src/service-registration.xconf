@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Configuration SYSTEM "xconf.dtd">
+<Configuration>
+    <!-- Choose a site-approved unique service slot; do not copy 99999 blindly. -->
+    <Property
+        name="wt.services.service.99999"
+        targetFile="codebase/wt.properties"
+        value="com.company.windchill.reference.service.ExampleService/com.company.windchill.reference.service.StandardExampleService"/>
+</Configuration>
