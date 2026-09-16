@@ -95,7 +95,11 @@ Select minimum sufficient Reference
         ↓
 Read reference.md
         ↓
-Read src/* only when needed
+Reference Sufficiency Gate
+        ↓
+Need implementation detail from source?
+        ├── No  → Stop Golden lookup
+        └── Yes → Read minimum necessary src/*
 ```
 
 Catalog Preflight 不等于加载全部 Golden Repository。
@@ -175,6 +179,251 @@ DataUtility instance cache
 
 ---
 
+## Quality-First Evidence Budget
+
+性能优化不得降低答案所需的 Evidence Coverage。
+
+核心原则：
+
+```text
+先使用最便宜且足够的 Evidence，
+但只要仍存在影响正确性的 Evidence Gap，
+就必须继续取证。
+```
+
+Golden 的优化对象是：
+
+```text
+不必要的读取深度
+重复 Reference
+无目的目录探测
+机会主义式的额外查阅
+```
+
+不是：
+
+```text
+必要的产品事实
+必要的 API 验证
+必要的实现模式
+```
+
+### Pattern-level Task
+
+如果用户主要要求：
+
+```text
+怎么设计
+采用什么模式
+职责怎么拆
+大致应该怎么实现
+这种方式是否合适
+```
+
+并且所选 `reference.md` 已经直接覆盖所需 Implementation Pattern：
+
+```text
+CATALOG.md
+→ 1 个直接匹配 reference.md
+→ Pattern Evidence Sufficient
+→ Stop Golden lookup
+```
+
+默认不得继续读取：
+
+```text
+src/*
+```
+
+只是因为：
+
+```text
+目录里还有示例代码
+可能还能找到更多细节
+顺便确认一下实现
+```
+
+都不足以构成读取 Source 的理由。
+
+### Implementation-level Task
+
+以下场景可以继续读取最小必要的 `src/*`：
+
+```text
+用户明确要求具体代码
+用户要求修改现有实现
+Code Review 需要与完整实现对照
+Debug 需要定位调用结构
+reference.md 没有提供解决问题所需的实现细节
+需要确认 Golden 自身实际采用的工程组织方式
+```
+
+即使需要 Source，也只读取：
+
+```text
+当前结论真正依赖的文件
+```
+
+不得因为进入一个 Reference，就默认遍历其全部 Source。
+
+### Diagnostic-level Task
+
+对于：
+
+```text
+Debug
+Code Review
+历史实现比较
+```
+
+如果问题本身依赖具体控制流、异常处理、生命周期或调用链，可以读取对应 Source。
+
+但读取必须回答一个明确问题，例如：
+
+```text
+这个 Listener 在哪里注册？
+这个 DataUtility 在哪里做批量预取？
+这个 Validator 在哪个 phase 返回状态？
+```
+
+不得进行：
+
+```text
+看看还有什么
+把整个目录都读一遍
+```
+
+式探索。
+
+---
+
+## Reference Sufficiency Gate
+
+读取 `reference.md` 后，在继续 Golden Tool Call 前先判断：
+
+```text
+当前用户要求的答案层级是什么？
+当前 Reference 是否已经覆盖该层级所需 Pattern？
+```
+
+### 可以停止 Golden Lookup
+
+如果同时满足：
+
+```text
+Reference Scenario 直接匹配
++
+Review Notes / Agent Guidance 已覆盖所需 Pattern
++
+最终答案不依赖 Reference Source 中额外实现细节
+```
+
+则停止读取 Golden。
+
+### 必须继续
+
+如果：
+
+```text
+用户要求具体实现，而 reference.md 信息不足
+或
+当前结论依赖 Source 中的结构
+或
+Reference 自身存在歧义
+```
+
+则读取最小必要 Source。
+
+### Golden 停止不等于 Evidence 停止
+
+即使 Golden 已经充分，也仍必须检查：
+
+```text
+Product / Framework Fact Gap
+Exact API Metadata Gap
+Compile Gap
+Runtime Gap
+```
+
+这些按照 Evidence Handoff 继续处理。
+
+因此：
+
+```text
+Stop Golden lookup
+```
+
+绝不意味着：
+
+```text
+Stop all verification
+```
+
+---
+
+## Tool Call Discipline
+
+每增加一次 Golden Tool Call，都应对应一个明确尚未解决的问题。
+
+允许：
+
+```text
+读取直接匹配的 reference.md
+读取为回答具体实现问题所必需的一个或少量 src 文件
+```
+
+避免：
+
+```text
+为了“保险”重复读取同一个 reference.md
+在已经知道 Reference Path 后重新搜索整个 Golden Repository
+递归列出整个 Golden Repository
+没有具体问题时执行 ls -R / find
+读取与当前答案无直接关系的相邻 Reference
+```
+
+如果确实需要知道某个 Selected Reference 的 Source 文件：
+
+```text
+只枚举该 Reference 自身目录
+```
+
+不得从 Golden Root 开始递归扫描。
+
+---
+
+## Stop Condition
+
+当以下条件同时满足时：
+
+```text
+用户所需 Implementation Pattern 已经得到支持
++
+不存在需要从 Golden Source 补充的具体实现细节
+```
+
+应立即结束 Golden Lookup。
+
+不得因为以下理由继续：
+
+```text
+worth checking
+might also help
+for completeness
+perhaps another example
+```
+
+如果仍存在：
+
+```text
+Framework / Product Behavior Gap
+Exact API Gap
+```
+
+应交给对应 Evidence Source，而不是继续扩大 Golden 搜索。
+
+---
+
 ## Reference ID
 
 Reference ID：
@@ -196,10 +445,12 @@ ID 是稳定标识，不因 Catalog 排序或新增重新编号。
 5. 先按模块定位，再按 Scenario / Project Constraint / Status / Source / XWorks 筛选候选。
 6. 只选择最小充分 Reference。
 7. 读取最终选择的 `reference.md`。
-8. 只有代码结构确实需要时再读取 `src/*`。
-9. 将 Reference 作为实现模式，不机械复制示例业务。
-10. 对 Reference 没有证明的事实继续执行 Evidence Handoff。
-11. 如 Reference 与 Rules / Project ADR / Approved Exception 冲突，服从更高优先级约束。
+8. 执行 Reference Sufficiency Gate。
+9. Pattern-level 已充分时停止 Golden Lookup，不默认读取 `src/*`。
+10. 只有具体实现、Review 或 Debug 确实依赖 Source 时，才读取最小必要的 `src/*`。
+11. 将 Reference 作为实现模式，不机械复制示例业务。
+12. 对 Reference 没有证明的事实继续执行 Evidence Handoff。
+13. 如 Reference 与 Rules / Project ADR / Approved Exception 冲突，服从更高优先级约束。
 
 ---
 
